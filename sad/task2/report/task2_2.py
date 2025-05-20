@@ -7,13 +7,15 @@ from scipy.stats import gaussian_kde
 
 # 1. Определите функцию плотности
 def density(X, theta):
-  """Плотность p(X|θ) = (√θ/√π) * exp(-X^2 * θ)"""
-  return (np.sqrt(theta) / np.sqrt(np.pi)) * np.exp(-X**2 * theta)
+    """Плотность p(X|θ) = (√θ/√π) * exp(-X^2 * θ)"""
+    return (np.sqrt(theta) / np.sqrt(np.pi)) * np.exp(-(X**2) * theta)
+
 
 # 2. Правила генерации выборки:
 # Произвольно выбрать значение параметра θ
 theta_true = 2.0  # Выберите произвольное значение для θ
 N = 50  # Размер выборки
+
 
 # Сгенерируйте выборку объёма N = 50
 # Обратите внимание: не существует простого способа напрямую сгенерировать выборку из этой плотности.
@@ -25,11 +27,14 @@ def rejection_sampling(N, theta):
         # Предложите из распределения Коши (тяжелые хвосты)
         Y = np.random.standard_cauchy()
         # Вычислите константу отклонения M (требуется верхняя граница плотности)
-        M = np.sqrt(theta) / (np.sqrt(np.pi) * density(0, theta))  # Наихудший случай в 0
+        M = np.sqrt(theta) / (
+            np.sqrt(np.pi) * density(0, theta)
+        )  # Наихудший случай в 0
         U = np.random.uniform(0, 1)
         if U <= density(Y, theta) / (M * (1 / (np.pi * (1 + Y**2)))):
             samples.append(Y)
     return np.array(samples)
+
 
 sample = rejection_sampling(N, theta_true)
 
@@ -50,7 +55,7 @@ theta_hat = N / (2 * np.sum(sample**2))
 
 # 6. Двусторонний асимптотический доверительный интервал надёжности 0.95 для параметра θ
 alpha = 0.05  # Уровень значимости
-z_alpha_2 = norm.ppf(1 - alpha/2)  # Квантиль Z для 0.975
+z_alpha_2 = norm.ppf(1 - alpha / 2)  # Квантиль Z для 0.975
 
 # Асимптотический доверительный интервал
 # Обратите внимание: это упрощенный асимптотический интервал, и его точность может быть ограничена,
@@ -65,22 +70,26 @@ plt.figure(figsize=(12, 6))
 
 # a. ECDF
 plt.subplot(1, 2, 1)
-plt.plot(ecdf.x, ecdf.y, label='ECDF')
-plt.xlabel('x')
-plt.ylabel('F(x)')
-plt.title('Эмпирическая функция распределения')
+plt.plot(ecdf.x, ecdf.y, label="ECDF")
+plt.xlabel("x")
+plt.ylabel("F(x)")
+plt.title("Эмпирическая функция распределения")
 
 # b. KDE
 plt.subplot(1, 2, 2)
-plt.plot(x_grid, kde(x_grid), label='Ядерная оценка плотности')
-plt.hist(sample, bins=20, density=True, alpha=0.5, label='Гистограмма выборки')  # Наложите гистограмму
-plt.xlabel('x')
-plt.ylabel('Плотность')
-plt.title('Ядерная оценка плотности')
+plt.plot(x_grid, kde(x_grid), label="Ядерная оценка плотности")
+plt.hist(
+    sample, bins=20, density=True, alpha=0.5, label="Гистограмма выборки"
+)  # Наложите гистограмму
+plt.xlabel("x")
+plt.ylabel("Плотность")
+plt.title("Ядерная оценка плотности")
 
 plt.tight_layout()
 plt.show()
 
 # 8. Вывод
 print(f"Оценка параметра θ (θ_hat): {theta_hat:.3f}")
-print(f"Приблизительный 95% доверительный интервал для θ: ({lower_bound:.3f}, {upper_bound:.3f})")
+print(
+    f"Приблизительный 95% доверительный интервал для θ: ({lower_bound:.3f}, {upper_bound:.3f})"
+)

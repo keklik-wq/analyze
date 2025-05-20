@@ -2,10 +2,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import gamma, chi2, gaussian_kde, norm
 
+
 # 1. Определите функцию плотности
 def density(X, theta):
     """Плотность p(X|θ) = ((X^4)/(4! * θ^5)) * exp(-X / θ)"""
     return (X**4 / (np.math.factorial(4) * theta**5)) * np.exp(-X / theta)
+
 
 # 2. Генерация выборки:
 # Произвольно выбрать значение параметра θ для нулевой гипотезы
@@ -25,7 +27,7 @@ X_bar = np.mean(sample)
 theta_hat = X_bar / 5
 
 # Вычислите статистику отношения правдоподобия Lambda
-Lambda = (X_bar / (5 * theta0))**(5 * N) * np.exp(5 * N * (1 - (X_bar / theta0)))
+Lambda = (X_bar / (5 * theta0)) ** (5 * N) * np.exp(5 * N * (1 - (X_bar / theta0)))
 
 # Вычислите статистику -2logLambda
 minus_2_log_Lambda = -2 * np.log(Lambda)
@@ -67,11 +69,11 @@ x_grid = np.linspace(min(sample), max(sample), 200)
 
 # 6. Графики
 plt.figure(figsize=(10, 6))
-plt.plot(x_grid, kde(x_grid), label='Ядерная оценка плотности')
-plt.hist(sample, bins=20, density=True, alpha=0.5, label='Гистограмма выборки')
-plt.xlabel('x')
-plt.ylabel('Плотность')
-plt.title('Ядерная оценка плотности сгенерированной выборки')
+plt.plot(x_grid, kde(x_grid), label="Ядерная оценка плотности")
+plt.hist(sample, bins=20, density=True, alpha=0.5, label="Гистограмма выборки")
+plt.xlabel("x")
+plt.ylabel("Плотность")
+plt.title("Ядерная оценка плотности сгенерированной выборки")
 plt.legend()
 plt.show()
 

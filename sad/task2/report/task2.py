@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.stats import norm
 
+
 def generate_and_estimate(theta, N=50, alpha=0.05):
     """
     Генерирует выборку из заданного распределения, находит оценку максимального правдоподобия (ОМП)
@@ -22,14 +23,16 @@ def generate_and_estimate(theta, N=50, alpha=0.05):
 
     def pdf(x, theta):
         """Плотность вероятности."""
-        return (np.sqrt(theta) / np.sqrt(np.pi)) * np.exp(-x**2 * theta)
+        return (np.sqrt(theta) / np.sqrt(np.pi)) * np.exp(-(x**2) * theta)
 
     # Выбираем M > max(pdf(x)) для всех x.  Например, M = sqrt(theta) / sqrt(pi).
     M = np.sqrt(theta) / np.sqrt(np.pi)
 
     sample = []
     while len(sample) < N:
-        x = np.random.uniform(-5, 5)  # Выбираем диапазон для x, чтобы покрыть большую часть плотности
+        x = np.random.uniform(
+            -5, 5
+        )  # Выбираем диапазон для x, чтобы покрыть большую часть плотности
         u = np.random.uniform(0, M)
 
         if u <= pdf(x, theta):
@@ -41,7 +44,9 @@ def generate_and_estimate(theta, N=50, alpha=0.05):
     theta_hat = N / (2 * np.sum(sample**2))
 
     # 3. Вычисление доверительного интервала
-    z_alpha_2 = norm.ppf(1 - alpha / 2)  # Квантиль стандартного нормального распределения
+    z_alpha_2 = norm.ppf(
+        1 - alpha / 2
+    )  # Квантиль стандартного нормального распределения
     ci_lower = theta_hat * (1 - z_alpha_2 * np.sqrt(2 / N))
     ci_upper = theta_hat * (1 + z_alpha_2 * np.sqrt(2 / N))
 
