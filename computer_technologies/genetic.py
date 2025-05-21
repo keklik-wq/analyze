@@ -7,7 +7,6 @@ GENERATIONS = 500
 MUTATION_RATE = 0.1
 NUM_CITIES = 20
 SECTION_POINT = 10
-ELITISM = True  
 
 def generate_cities(n):
     return [(random.uniform(0, 100), random.uniform(0, 100)) for _ in range(n)]
@@ -56,7 +55,7 @@ def next_generation(current_gen, cities):
         child = mutate(child)
         new_population.append(child)
 
-    if ELITISM and len(current_gen) > 0:
+    if len(current_gen) > 0:
         best = min(current_gen, key=lambda x: grade(x, cities))
         new_population[-1] = best  
 
