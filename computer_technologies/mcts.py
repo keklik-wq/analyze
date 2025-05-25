@@ -2,6 +2,9 @@ import math
 import random
 import numpy as np
 
+DEBUG = False
+DEBUG_1 = True
+ITERATIONS = 0
 class KrestiksAndNoliks:
     def __init__(self, board=None, current_player='X'):
         if board is None:
@@ -87,27 +90,35 @@ class MCTSNode:
         choices_weights = [
             (child.q / child.visits) + c_param * math.sqrt(math.log(self.visits) / child.visits) for child in self.children
         ]
+        if DEBUG:
+            print(f'pick best child {self.children[np.argmax(choices_weights)].move}')
         return self.children[np.argmax(choices_weights)]
 
     def expand(self):
         move = self.untried_moves.pop()
+        if DEBUG:
+            print(f'expand move: {move}')
         next_state = self.state.make_move(move)
         child_node = MCTSNode(next_state, parent=self, move=move)
         self.children.append(child_node)
         return child_node
 
     def is_terminal(self):
+        if DEBUG:
+            print(f"if game is over: {self.state.game_over}")
         return self.state.game_over
 
 
 class MCTS:
-    def __init__(self, root_state, iterations=1000, c_param=1.4):
+    def __init__(self, root_state, iterations=10, c_param=1.4):
         self.root = MCTSNode(root_state)
         self.iterations = iterations
         self.c_param = c_param
 
     def search(self):
+        global ITERATIONS
         for _ in range(self.iterations):
+            ITERATIONS += 1
             node = self._select(self.root)
             if not node.is_terminal():
                 node = node.expand()
@@ -115,15 +126,21 @@ class MCTS:
             self._backpropagate(node, result)
         
         best_child = max(self.root.children, key=lambda child: child.visits)
+        if DEBUG:
+            print(f'ITERATIONS {ITERATIONS}')
         return best_child.move
 
     def _select(self, node):
         current_node = node
-        while not current_node.is_terminal():
+        a = 0
+        if not current_node.is_terminal():
+            a += 1
             if not current_node.is_fully_expanded():
                 return current_node
             else:
-                current_node = current_node.best_child(self.c_param)
+                return current_node.best_child(self.c_param)
+        if DEBUG_1:
+            print(f'a123123 {a}')
         return current_node
 
     def _simulate(self, node):
@@ -156,7 +173,7 @@ def play_game_with_mcts():
             mcts = MCTS(game)
             best_move = mcts.search()
             game = game.make_move(best_move)
-            print(f"Компьютер делает ход: {best_move}")
+            print(f"Компуктер делает ход: {best_move}")
         
         print(game)
     
@@ -167,9 +184,4 @@ def play_game_with_mcts():
 
 
 if __name__ == "__main__":
-    # initial_state = KrestiksAndNoliks()
-    # mcts = MCTS(initial_state)
-    # best_move = mcts.search()
-    # print(f"Лучший ход из начальной позиции: {best_move}")
-    
     play_game_with_mcts()
