@@ -29,7 +29,7 @@ Lasso best alpha: 0.1010
 Истинные коэффициенты:
 [ 1. -2.  0.  0.  0.  0.  0.  0.  0.  0.]
 
-Сравнение моделей:
+Сравнение моделей (epsilon = np.random.normal(0, 0.2, size=N)):
 
 LinearRegression:
 MSE: 0.0077
@@ -51,7 +51,7 @@ Lasso best alpha: 0.1010
 Истинные коэффициенты:
 [ 1. -2.  0.  0.  0.  0.  0.  0.  0.  0.]
 
-Сравнение моделей:
+Сравнение моделей(epsilon = np.random.normal(0, 1, size=N)):
 
 LinearRegression:
 MSE: 0.7722
