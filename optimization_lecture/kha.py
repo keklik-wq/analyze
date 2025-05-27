@@ -5,7 +5,7 @@ def krill_herd_algorithm(obj_func, dim, n_krill, max_iter, lb, ub):
     fitness = np.array([obj_func(k) for k in krill])
     best_idx = np.argmin(fitness)
     X_food = krill[best_idx].copy()
-    best_fitness = fitness[best_idx]
+    leader_fitness = fitness[best_idx]
     
     N_max = 0.01  
     D_max = 0.002 
@@ -15,6 +15,7 @@ def krill_herd_algorithm(obj_func, dim, n_krill, max_iter, lb, ub):
     N = np.zeros((n_krill, dim))  
     F = np.zeros((n_krill, dim))  
     
+    convergence_curve = np.zeros(max_iter)
     for t in range(max_iter):
         for i in range(n_krill):
             neighbors = krill[np.random.choice(n_krill, size=5, replace=False)]
@@ -29,22 +30,31 @@ def krill_herd_algorithm(obj_func, dim, n_krill, max_iter, lb, ub):
         
         fitness = np.array([obj_func(k) for k in krill])
         new_best_idx = np.argmin(fitness)
-        if fitness[new_best_idx] < best_fitness:
+        if fitness[new_best_idx] < leader_fitness:
             X_food = krill[new_best_idx].copy()
-            best_fitness = fitness[new_best_idx]
-
+            leader_fitness = fitness[new_best_idx]
+        
+        convergence_curve[t] = leader_fitness
         if t % 50 == 0:
-            print(f"Iteration {t}: Best Fitness = {best_fitness}")
+            print(f"Iteration {t}: Best Fitness = {leader_fitness}")
             #print(f"Iteration {t}: Curve = {convergence_curve}")
     
-    return X_food, best_fitness
+    return X_food, leader_fitness, convergence_curve
 
 def sphere(x):
     return np.sum(x ** 2)
 
-best_solution, best_value = krill_herd_algorithm(
-    sphere, dim=10, n_krill=50, max_iter=500, lb=-10, ub=10
-)
 
-print(f"Лучшее решение: {best_solution}")
-print(f"Лучшее значение функции: {best_value}")
+if __name__ == "__main__":
+    
+    dim = 10      
+    n_grasshoppers = 10  
+    max_iter = 500
+    lb = -10      
+    ub = 10       
+    best_solution, best_value = krill_herd_algorithm(
+        sphere, dim=10, n_krill=50, max_iter=500, lb=-10, ub=10
+    )
+    print("\n--- Results ---")
+    print(f"Best solution: {best_solution}")
+    print(f"Best function value: {best_value}")

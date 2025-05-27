@@ -52,6 +52,7 @@ def salp_swarm_algorithm(obj_func, dim, n_salps, max_iter, lb, ub):
             #print(f"Iteration {t}: Curve = {convergence_curve}")
     
     return leader, leader_fitness, convergence_curve
+    #return leader, leader_fitness
 
 def sphere(x):
     return np.sum(x ** 2)
